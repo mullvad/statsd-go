@@ -1,7 +1,6 @@
 package statsd
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"math/rand"
@@ -263,9 +262,7 @@ func (c *conn) handleError(err error) {
 
 type writeCloser struct {
 	udpAddr net.Addr
-
-	conn   net.PacketConn
-	closed bool
+	conn    net.PacketConn
 }
 
 func newWriteCloser(network, addr string, timeout time.Duration) (io.WriteCloser, error) {
@@ -286,10 +283,6 @@ func newWriteCloser(network, addr string, timeout time.Duration) (io.WriteCloser
 }
 
 func (w *writeCloser) Write(p []byte) (int, error) {
-	if w.closed {
-		return 0, errors.New("writeCloser already closed")
-	}
-
 	n, err := w.conn.WriteTo(p, w.udpAddr)
 	if err != nil {
 		return 0, err
@@ -299,8 +292,6 @@ func (w *writeCloser) Write(p []byte) (int, error) {
 }
 
 func (w *writeCloser) Close() error {
-	w.closed = true
-
 	return w.conn.Close()
 }
 
