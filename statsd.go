@@ -22,6 +22,7 @@ func New(opts ...Option) (*Client, error) {
 		},
 		Conn: connConfig{
 			Addr:        ":8125",
+			ListenAddr:  "127.0.0.1:",
 			FlushPeriod: 100 * time.Millisecond,
 			// Worst-case scenario:
 			// Ethernet MTU - IPv6 Header - TCP Header = 1500 - 40 - 20 = 1440
