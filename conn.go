@@ -44,7 +44,7 @@ func newConn(conf connConfig, muted bool) (*conn, error) {
 	}
 
 	var err error
-	c.w, err = newWriteCloser(c.network, c.addr, c.listenAddr, 5*time.Second)
+	c.w, err = newWriteCloser(c.network, c.addr, c.listenAddr)
 	if err != nil {
 		return c, err
 	}
@@ -267,7 +267,7 @@ type writeCloser struct {
 	conn    net.PacketConn
 }
 
-func newWriteCloser(network, addr, listenAddr string, timeout time.Duration) (io.WriteCloser, error) {
+func newWriteCloser(network, addr, listenAddr string) (io.WriteCloser, error) {
 	c, err := listenPacket(network, listenAddr)
 	if err != nil {
 		return nil, err
