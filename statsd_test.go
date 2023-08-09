@@ -132,7 +132,7 @@ func TestMute(t *testing.T) {
 	}
 	defer func() { listenPacket = net.ListenPacket }()
 
-	c, err := New(Mute(true))
+	c, err := New(Mute(true), ListenAddress(""))
 	if err != nil {
 		t.Errorf("New() = %v", err)
 	}
@@ -202,7 +202,7 @@ func TestOddTagsArgs(t *testing.T) {
 		}
 	}()
 
-	_, _ = New(TagsFormat(InfluxDB), Tags("tag1"))
+	_, _ = New(TagsFormat(InfluxDB), Tags("tag1"), ListenAddress(""))
 	t.Fatal("A panic should occur")
 }
 
@@ -342,7 +342,7 @@ func TestDialError(t *testing.T) {
 	}
 	defer func() { listenPacket = net.ListenPacket }()
 
-	c, err := New()
+	c, err := New(ListenAddress(""))
 	if c == nil || !c.muted {
 		t.Error("New() did not return a muted client")
 	}
@@ -369,7 +369,7 @@ func TestUDPNotListening(t *testing.T) {
 	listenPacket = mockUDPClosed
 	defer func() { listenPacket = net.ListenPacket }()
 
-	c, err := New()
+	c, err := New(ListenAddress(""))
 	if err != nil {
 		t.Errorf("New() should not have returned an error, got %v", err)
 	}
@@ -407,6 +407,7 @@ func testClient(t *testing.T, f func(*Client), options ...Option) {
 	options = append([]Option{
 		FlushPeriod(0),
 		ErrorHandler(expectNoError(t)),
+		ListenAddress(""),
 	}, options...)
 	c, err := New(options...)
 	if err != nil {
@@ -490,6 +491,7 @@ func testNetwork(t *testing.T, network string) {
 
 	c, err := New(
 		Address(server.addr),
+		ListenAddress(""),
 		Network(network),
 		ErrorHandler(expectNoError(t)),
 	)
@@ -579,7 +581,7 @@ func (s *server) Close() {
 
 func Benchmark(b *testing.B) {
 	serv := newServer(b, "udp", testAddr, func([]byte) {})
-	c, err := New(Address(serv.addr), FlushPeriod(0))
+	c, err := New(Address(serv.addr), ListenAddress(""), FlushPeriod(0))
 	if err != nil {
 		b.Fatal(err)
 	}

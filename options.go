@@ -43,9 +43,9 @@ func Address(addr string) Option {
 
 // ListenAddress sets the address of the ListenPacket call.
 //
-// By default, "", is used. If the listen address empty, ListenPacket listens
-// on all available IP addresses of the local system except multicast IP
-// addresses.
+// By default, "127.0.0.1:", is used. If the listen address empty, ListenPacket
+// listens on all available IP addresses of the local system except multicast
+// IP addresses.
 func ListenAddress(listenAddr string) Option {
 	return Option(func(c *config) {
 		c.Conn.ListenAddr = listenAddr
