@@ -20,6 +20,7 @@ type clientConfig struct {
 
 type connConfig struct {
 	Addr          string
+	ListenAddr    string
 	ErrorHandler  func(error)
 	FlushPeriod   time.Duration
 	MaxPacketSize int
@@ -37,6 +38,17 @@ type Option func(*config)
 func Address(addr string) Option {
 	return Option(func(c *config) {
 		c.Conn.Addr = addr
+	})
+}
+
+// ListenAddress sets the address of the ListenPacket call.
+//
+// By default, "", is used. If the listen address empty, ListenPacket listens
+// on all available IP addresses of the local system except multicast IP
+// addresses.
+func ListenAddress(listenAddr string) Option {
+	return Option(func(c *config) {
+		c.Conn.ListenAddr = listenAddr
 	})
 }
 

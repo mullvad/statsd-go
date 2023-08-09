@@ -13,6 +13,7 @@ import (
 type conn struct {
 	// Fields settable with options at Client's creation.
 	addr          string
+	listenAddr    string
 	errorHandler  func(error)
 	flushPeriod   time.Duration
 	maxPacketSize int
@@ -30,6 +31,7 @@ type conn struct {
 func newConn(conf connConfig, muted bool) (*conn, error) {
 	c := &conn{
 		addr:          conf.Addr,
+		listenAddr:    conf.ListenAddr,
 		errorHandler:  conf.ErrorHandler,
 		flushPeriod:   conf.FlushPeriod,
 		maxPacketSize: conf.MaxPacketSize,
@@ -42,7 +44,7 @@ func newConn(conf connConfig, muted bool) (*conn, error) {
 	}
 
 	var err error
-	c.w, err = newWriteCloser(c.network, c.addr, 5*time.Second)
+	c.w, err = newWriteCloser(c.network, c.addr, c.listenAddr, 5*time.Second)
 	if err != nil {
 		return c, err
 	}
@@ -265,8 +267,8 @@ type writeCloser struct {
 	conn    net.PacketConn
 }
 
-func newWriteCloser(network, addr string, timeout time.Duration) (io.WriteCloser, error) {
-	c, err := listenPacket(network, "")
+func newWriteCloser(network, addr, listenAddr string, timeout time.Duration) (io.WriteCloser, error) {
+	c, err := listenPacket(network, listenAddr)
 	if err != nil {
 		return nil, err
 	}
