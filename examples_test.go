@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/infosum/statsd"
+	"github.com/mullvad/statsd-go/v2"
 )
 
 var (
